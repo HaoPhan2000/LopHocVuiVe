@@ -1,0 +1,204 @@
+<div class="container-lg">
+  <div class="row">
+    <div class="col-lg-3 col-sm-12">
+      <div class="container-md p-0">
+        {{#with classesobj}}
+        <div class="card card-info">
+          <div class="card-body">
+            <h4 class="card-title fw-bold">Thông tin lớp học</h4>
+            <div class="row">
+              <div class="col-md-12">
+                <p class="card-text fw-bold">
+                  <strong>Môn học:</strong> {{this.tenMonHoc}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Tên giáo viên:</strong> {{this.tenGiaoVien}}
+                </p>
+                <p class="card-text fw-bold text-danger">
+                  <strong>Ngày dạy:</strong> {{this.ngayDay}}
+                </p>
+                <p class="card-text fw-bold text-danger">
+                  <strong>Giờ dạy:</strong> {{time this.gioBatDau
+                  this.gioKetThuc}}
+                </p>
+                <p class="card-text">
+                  <strong>Ngày khai giảng:</strong> {{this.ngayKhaiGiang}}
+                </p>
+                <p class="card-text">
+                  <strong>Học phí:</strong> {{addDotToNumber this.hocPhi}}
+                </p>
+                <p class="card-text">
+                  <strong>Số lượng học sinh:</strong> {{this.soLuongHS}}
+                </p>
+                <p class="card-text">
+                  <strong>Năm học:</strong> {{this.this.namHoc}}
+                </p>
+                <p class="card-text"><strong>Học kì:</strong> {{this.hocKi}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/with}}
+      </div>
+    </div>
+    <div class=" d-flex flex-column col-lg-9 col-sm-12">
+      <div class="d-flex justify-content-start align-items-center p-3 mt-2">
+        <div><h5 class="m-0">Danh sách học sinh dừng học</h5></div>
+      </div>
+      <div class="flex-grow-1 table-container">
+        {{#if studentsobj.length}}
+        <div class="table-responsive-lg">
+        <table class="table m-0">
+          <thead>
+            <tr>
+              <th class="text-center">STT {{{sortReverse _sortReverse}}}</th>
+              <th>
+                <div class="d-flex">
+                  <div class="me-1">
+                    <p class="m-0">Họ và tên</p>
+                  </div>
+                  <div>{{{sortName _sortName}}}</div>
+                </div>
+              </th>
+              <th>Số điện thoại</th>
+              <th class="text-center">Chọn học sinh</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each studentsobj}}
+            <tr>
+              <td class="text-center">{{sum @index 1}}</td>
+              <td>{{this.tenHocSinh}}</td>
+              <td>{{this.soDienThoai}}</td>
+              <td class="p-0">
+                <div class="scrollable-list_checkbox container_checkbox_table">
+                  <input id="{{this._id}}" type="checkbox" />
+                </div>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+        {{else}}
+        <div
+          class="container d-flex flex-column justify-content-center align-items-center"
+        >
+          <div class="mt-5">
+            <i class="fa-solid fa-user-slash fa-8x custom-icon-color"></i>
+          </div>
+          <div>
+            <div
+              class="d-flex flex-column justify-content-center align-items-center mt-1"
+            >
+              <h5 class="text-muted p-3">
+                Không có học sinh nào dừng học ở lớp này!
+              </h5>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <div>
+          {{#if studentsobj.length}}
+          <button class="btn btn-primary white-space-nowrap" id="addLeaveStudents">
+            Thêm lại vào lớp học
+          </button>
+          {{/if}}
+        </div>
+        <div>
+          <a
+            href="/classes/{{classesobj._id}}/classDetail"
+            class="btn btn-danger white-space-nowrap"
+            >Quay về</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  const idClass = "{{ classesobj._id }}";
+  let selectedIds = [];
+  const dropdown = document.querySelector("#sortNameClassDetail");
+  const addLeaveStudents = document.querySelector("#addLeaveStudents");
+  const listCheckBox = document.querySelectorAll(
+    '.scrollable-list_checkbox input[type="checkbox"]'
+  );
+  listCheckBox.forEach((checkBox, index) => {
+    checkBox.onclick = function () {
+      const index = selectedIds.indexOf(checkBox.id);
+      if (index !== -1) {
+        selectedIds.splice(index, 1);
+      } else {
+        selectedIds.push(checkBox.id);
+      }
+    };
+  });
+
+  if (dropdown) {
+    dropdown.addEventListener("change", function () {
+      const selectedOption = dropdown.options[dropdown.selectedIndex].value;
+      if (selectedOption) {
+        window.location.href = selectedOption;
+      }
+    });
+  }
+  if (addLeaveStudents) {
+    addLeaveStudents.addEventListener("click", function () {
+      if (selectedIds.length != 0) {
+        fetch(`/classes/${idClass}/actionAddleaveStudent`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedIds),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.toastMessage == "success") {
+              localStorage.setItem(
+                "toastData",
+                JSON.stringify({
+                  type: data.toastMessage,
+                  title: "Thành công",
+                  message: "Thêm học sinh vào lại lớp học thành công",
+                  duration: 3000,
+                })
+              );
+              window.location.href = data.redirectTo;
+            } else if (data.toastMessage == "error") {
+              localStorage.setItem(
+                "toastData",
+                JSON.stringify({
+                  type: data.toastMessage,
+                  title: "Thất bại",
+                  message:
+                    "Thêm học sinh vào lại lớp học thất bại do lỗi sever",
+                  duration: 3000,
+                })
+              );
+              window.location.href = data.redirectTo;
+            }
+          })
+          .catch((error) => {
+            toastMessage(
+              "warning",
+              "Cảnh báo",
+              "Có lỗi xảy ra vui lòng thử lại",
+              3000
+            );
+          });
+      } else {
+        toastMessage(
+          "warning",
+          "Báo lỗi",
+          "Bạn chưa chọn học sinh để thêm lại vào lớp",
+          3000
+        );
+      }
+    });
+  }
+</script>

@@ -1,0 +1,335 @@
+<style>
+  .tabs {
+    display: flex;
+    position: relative;
+  }
+  .tabs .line {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 6px;
+    border-radius: 15px;
+    background-color: #0d6efd;
+    transition: all 0.2s ease;
+  }
+  .tab-item {
+    min-width: 80px;
+    padding: 16px 20px 11px 20px;
+    font-size: 20px;
+    text-align: center;
+    color: #212529;
+    background-color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 5px solid transparent;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: all 0.5s ease;
+  }
+  .tab-icon {
+    font-size: 20px;
+    width: 32px;
+    position: relative;
+    top: 2px;
+  }
+  .tab-item:hover {
+    opacity: 1;
+    background-color: rgba(218, 220, 224, 0.2);
+    border-color: rgba(218, 220, 224, 0.8);
+  }
+  .tab-item.active {
+    opacity: 1;
+  }
+  .tab-content {
+    padding: 28px 0;
+  }
+  .tab-pane {
+    display: none;
+  }
+  .tab-pane.active {
+    display: block;
+  }
+  select {
+    padding: 5px;
+    border: 2px solid #cccccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    width: 100px; /* Width of the select box */
+    height: auto; /* Allow the select box to resize based on its contents */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+  select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  select option {
+    font-size: 16px;
+    padding: 5px;
+  }
+  .circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 100rem;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .circle-total {
+    background-color: #dc3545;
+  }
+  .circle-allStudent {
+    background-color: #0d6efd;
+  }
+  .circle-student {
+    background-color: #198754;
+  }
+  </style>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<div class="container-lg">
+<div>
+  <h5 class="p-3 mt-2">Báo cáo học phí và thống kê học sinh</h5>
+</div>
+<div class="container-lg flex-grow-1 custom-background-color border">
+  <div>
+    <h5 class="p-2 mt-2">Báo cáo tổng quan</h5>
+  </div>
+  <div class="row mb-3 border border-white">
+    <div class="d-flex align-items-center col-md-4 col-sm-12 p-3">
+      <div class="circle circle-total">
+        <i class="fa-solid fa-dollar-sign fa-2x"></i>
+      </div>
+      <div class="ms-2">
+        <div><h6 class="text-muted">Tổng thu học phí</h6></div>
+        <div>
+          <h5>{{addDotToNumber report.totalCost}} <span>VND</span></h5>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center col-md-4 col-sm-12 p-3">
+      <div class="circle circle-allStudent">
+        <i class="fa-solid fa-people-group fa-2x"></i>
+      </div>
+      <div class="ms-2">
+        <div><h6 class="text-muted">Tổng số học sinh đã học</h6></div>
+        <div>
+          <h5>{{report.totalStudentAllClasses}} <span>Học sinh</span></h5>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center col-md-4 col-sm-12 p-3">
+      <div class="circle circle-student">
+        <i class="fa-solid fa-person-circle-check fa-2x"></i>
+      </div>
+      <div class="ms-2">
+        <div><h6 class="text-muted">Tổng số học sinh đang học</h6></div>
+        <div>
+          <h5>{{report.totalStudentActivityClasses}} <span>Học sinh</span></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-lg  flex-grow-1">
+  <div>
+    <!-- Tab items -->
+    <div class="tabs">
+      <div class="tab-item active">
+        <i class="fa-solid fa-money-check-dollar"></i>
+        Học phí
+      </div>
+      <div class="tab-item">
+        <i class="fa-solid fa-people-roof"></i>
+        Học sinh
+      </div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <div class="tab-pane tab-lineChart active">
+        <div class="d-flex justify-content-start align-items-center">
+         <div> <label for="yearSelect2"><h6 class="m-0">Đến năm:</h6></label></div>
+          <div class="ms-3">
+            <select class="form-select" id="selectYear">
+            </select>
+          </div>
+          <div class="ms-4">
+            <button class="btn btn-primary" id="btnChangelineChart">Thay đổi</button>
+          </div>
+        </div>
+        <div class="container-lg mt-3" id="lineChart" style="width: 100%;"></div>
+      </div>
+      <div class="tab-pane tab-horizontalBarChart">
+        <div class="d-flex align-items-center">
+          <div><h6 class="m-0">Hiển thị các lớp học đã kết thúc</h6></div>
+          <div class="toggleWrapper" id="toggleWrapper-horizontalBarChart" style="margin-left: 20px">
+            <label class="switch">
+              <input type="checkbox"/>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="container-lg mt-3" id="horizontalBarChart" style="width:100%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <div>
+    <button type="button" class="btn btn-danger" onclick="previous(event)">
+      Quay về
+    </button>
+  </div>
+</div>
+</div>
+<script>
+
+const allClasses = JSON.parse('{{{ allClasses}}}');
+const bills = JSON.parse('{{{ bills}}}');
+     function previous() {
+       history.back();
+     }
+     const today= new Date();
+     let valueCheckboxesHorizontalBarChart
+     const checkboxesHorizontalBarChart = document.querySelector('#toggleWrapper-horizontalBarChart input[type="checkbox"]');
+     const selectYear = document.querySelector('#selectYear');
+     const btnChangelineChart=document.querySelector("#btnChangelineChart")
+     const tabs = document.querySelectorAll(".tab-item");
+     const panes = document.querySelectorAll(".tab-pane");
+
+     const tabActive = document.querySelector(".tab-item.active");
+     const line = document.querySelector(".tabs .line");
+
+     line.style.left = tabActive.offsetLeft + "px";
+     line.style.width = tabActive.offsetWidth + "px";
+
+     tabs.forEach((tab, index) => {
+       tab.onclick = function () {
+         const pane = panes[index];
+         document.querySelector(".tab-item.active").classList.remove("active");
+         document.querySelector(".tab-pane.active").classList.remove("active");
+
+         line.style.left = this.offsetLeft + "px";
+         line.style.width = this.offsetWidth + "px";
+
+         this.classList.add("active");
+         pane.classList.add("active");
+         rerenderChart()
+       };
+     });
+     
+     for (let year = 2020; year <= today.getFullYear(); year++) {
+            // Tạo thẻ option mới
+            const option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            // Đặt thuộc tính selected cho năm hiện tại
+            if (year == today.getFullYear()) {
+                option.selected = true;
+            }
+            // Thêm thẻ option vào thẻ select
+            selectYear.appendChild(option);
+        }
+    btnChangelineChart.addEventListener("click",() =>{
+      lineChart("lineChart",loadDataLineChart(bills,selectYear.value),selectYear.value);
+    })
+
+    checkboxesHorizontalBarChart.addEventListener("change", function (event) {
+      valueCheckboxesHorizontalBarChart = event.target.checked;
+      horizontalBarChart("horizontalBarChart",loadDataHorizontalBarChart(valueCheckboxesHorizontalBarChart));
+    })
+   
+     lineChart("lineChart",loadDataLineChart(bills, today.getFullYear()),selectYear.value);
+     horizontalBarChart("horizontalBarChart",loadDataHorizontalBarChart(false));
+
+     function loadDataLineChart(payments, year) {
+      const monthlyTotals = new Array(12).fill(0);
+      payments.forEach(payment => {
+      const paymentDate = new Date(payment.ngayDongHocPhi);
+      if (paymentDate.getFullYear() == year) {
+        const month = paymentDate.getMonth();
+        monthlyTotals[month] += payment.tongTien;
+      }
+    });
+        return monthlyTotals;
+      }
+     function loadDataHorizontalBarChart(isChecked) {
+        const data = {
+          class: [],
+          soLuongHocSinh: []
+        };
+
+        if (isChecked) {
+          allClasses.forEach((item) => {
+            data.class.push(`${item.tenMonHoc}-${item.tenGiaoVien}-${item.ngayDay}`);
+            data.soLuongHocSinh.push(item.soLuongHS); 
+          });
+        } else {
+          allClasses.forEach((item) => {
+            if (!item.ketThuc) {
+              data.class.push(`${item.tenMonHoc}-${item.tenGiaoVien}-${item.ngayDay}`);
+              data.soLuongHocSinh.push(item.soLuongHS);
+            }
+          });
+        }
+        return data;
+      }
+
+
+     function horizontalBarChart(id,chartData) {
+       const data = [
+         {
+           x: chartData.soLuongHocSinh,
+           y:chartData.class,
+           type: "bar",
+           orientation: "h",
+           marker: { color: "rgba(255,0,0,0.6)" },
+         },
+       ];
+
+       const layout = { margin: {l: 150,}, title: "Biểu đồ số học sinh trong mỗi lớp" };
+
+       Plotly.newPlot(id, data, layout);
+     }
+
+     function lineChart(id,chartData,year) {
+       const xArray = [1,2,3,4,5,6,7,8,9,10,11,12];
+       const maxData=Math.max(...chartData)
+       // Define Data
+       const data = [
+         {
+           x: xArray,
+           y: chartData,
+           mode: "lines",
+         },
+       ];
+
+       // Define Layout
+       const layout = {
+         xaxis: { range: [1,12], title: "Tháng" },
+         yaxis: { range: [0,maxData], title: "Số tiền" },
+         title: `Báo cáo thu học phí ${year}`,
+       };
+
+       // Display using Plotly
+       Plotly.newPlot(id, data, layout);
+     }
+    function rerenderChart(){  
+    const activeTabPane = document.querySelector('.tab-pane.active');
+    if(activeTabPane.className.includes("tab-lineChart"))
+    {
+      lineChart("lineChart",loadDataLineChart(bills,selectYear.value),selectYear.value);
+    }
+    else if( activeTabPane.className.includes("tab-horizontalBarChart"))
+    { 
+      horizontalBarChart("horizontalBarChart",loadDataHorizontalBarChart(valueCheckboxesHorizontalBarChart));
+    }
+     }
+      window.addEventListener('resize',rerenderChart);
+
+</script>

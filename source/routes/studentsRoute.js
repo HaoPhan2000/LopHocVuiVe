@@ -1,0 +1,15 @@
+const router = require("express").Router();
+const searchMiddleWare=require("../middleWares/searchMiddleWare");
+const sortMiddleWare = require("../middleWares/sortMiddleWare");
+const paginationMiddleWare=require("../middleWares/paginationMiddleWare");
+const studentsController = require("../controllers/studentsController");
+router.get("/studentPage",searchMiddleWare,sortMiddleWare,studentsController.index);
+router.get("/createStudent",studentsController.studentCreate);
+router.post("/actionCreate", studentsController.studentActionCreate);
+router.get("/student/:idStudent",sortMiddleWare,paginationMiddleWare,studentsController.studentDetail);
+router.get("/class/:idClass/student/:idStudent",sortMiddleWare,paginationMiddleWare,studentsController.studentDetailInClass);
+router.get("/:id/editStudent", studentsController.studentEdit);
+router.patch("/:id/actionEdit", studentsController.studentActionEdit);
+router.patch("/:id/actionUpdateEmailStudents", studentsController.actionUpdateEmailStudents);
+router.post("/:id/actionUpdateDungKhoaHocStudents", studentsController.actionUpdateDungKhoaHocStudents);
+module.exports = router;

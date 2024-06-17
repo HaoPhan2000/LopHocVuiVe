@@ -1,0 +1,281 @@
+<div class="container-lg">
+  <div class="row">
+    <div class="col-lg-3 col-sm-12 col-12">
+      <div class="container-sm p-0">
+        {{#with studentobj}}
+        <div class="card card-info mb-3">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Thông tin học sinh</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <p class="card-text fw-bold text-danger">
+                  <strong>Tên học sinh:</strong> {{this.tenHocSinh}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Số điện thoại:</strong> {{this.soDienThoai}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Địa chỉ:</strong>
+                  {{this.diaChi}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Gmail:</strong> {{this.email}}
+                </p>
+                <p class="card-text">
+                  <strong>Họ tên cha:</strong> {{this.tenCha}}
+                </p>
+                <p class="card-text">
+                  <strong>Số điện thoại cha:</strong> {{this.soDienThoaiCha}}
+                </p>
+                <p class="card-text">
+                  <strong>Họ tên mẹ:</strong> {{this.tenMe}}
+                </p>
+                <p class="card-text">
+                  <strong>Số điện thoại mẹ:</strong> {{this.soDienThoaiMe}}
+                </p>
+              </div>
+              <div class="col-md-12 mt-3">
+                <div class="d-flex">
+                  <div class="d-flex flex-column justify-content-around">
+                    <div>
+                      <h6 class="m-0">Mail hạn học phí</h6>
+                    </div>
+                    <div><h6 class="m-0">Mail hóa đơn</h6></div>
+                  </div>
+                  <div class="ms-1">
+                    <div
+                      class="toggleWrapper toggleWrapper-email py-1"
+                      data-field="emailHocPhi"
+                    >
+                      <label class="switch">
+                        <input type="checkbox" {{#if emailHocPhi}} checked
+                        {{/if}} />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div
+                      class="toggleWrapper toggleWrapper-email py-1"
+                      data-field="emailHoaDon"
+                    >
+                      <label class="switch">
+                        <input type="checkbox" {{#if emailHoaDon}} checked
+                        {{/if}} />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/with}}
+        <div class="card card-info">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Danh sách lớp học</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <ul class="list-unstyled">
+                  {{#each Classesobj}}
+                  <li class="studentDetail_custom-li">
+                    <div
+                      class="d-flex justify-content-around align-items-center p-0"
+                    >
+                      <div style="width: 50%">
+                        <div><strong>{{this.tenMonHoc}}</strong></div>
+                        <div><strong>{{this.ngayDay}}</strong></div>
+                      </div>
+                      <div style="width: 50%">
+                        <div><strong>{{this.tenGiaoVien}}</strong></div>
+                        <div>
+                          <a
+                            href="/classes/{{this._id}}/classDetail"
+                            style="text-decoration: none"
+                            >chi tiết</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  {{/each}}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-column col-lg-9 col-sm-12 col-12">
+      <div class="d-flex justify-content-between align-items-center p-3 mt-2">
+        <div><h5>Danh sách hóa đơn</h5></div>
+        <div>
+          <a
+            href="/bills/createBill/student?idStudent={{studentobj._id}}"
+            class="btn btn-primary white-space-nowrap"
+            >Thêm hóa đơn</a
+          >
+        </div>
+      </div>
+      <div class="flex-grow-1 table-container">
+        {{#if billsobj.length}}
+        <div class="table-responsive-lg">
+          <table class="table m-0">
+            <thead>
+              <tr>
+                <th class="text-center">STT {{{sortReverse _sortReverse}}}</th>
+                <th>Số tiền</th>
+                <th>Ngày đóng học phí</th>
+                <th>Phương Thức thanh toán</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each billsobj}}
+              <tr>
+                <td class="text-center">
+                  {{paginationIndex ../_pagination 15 @index }}
+                </td>
+                <td>{{addDotToNumber this.tongTien}}</td>
+                <td>{{formatDate this.ngayDongHocPhi}}</td>
+                <td>{{this.phuongThucThanhToan}}</td>
+                <td>
+                  <a
+                    href="/bills/{{this._id}}/billDetail"
+                    class="no-underline text-success"
+                    >Chi tiết</a
+                  >
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <div
+          class="container d-flex flex-column justify-content-center align-items-center mt-5"
+        >
+          <div>
+            <i
+              class="fa-solid fa-file-invoice-dollar fa-8x custom-icon-color"
+            ></i>
+          </div>
+          <div>
+            <div
+              class="d-flex flex-column justify-content-center align-items-center mt-1"
+            >
+              <h5 class="text-muted p-3">
+                Không có hóa đơn thanh toán nào của học sinh này!
+              </h5>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>{{{pagination _pagination totalPage}}}</div>
+        <div>
+          <a href="/students/studentPage" class="btn btn-danger">Quay về</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  function displayToastFromLocalStorage(key) {
+    const toastData = JSON.parse(localStorage.getItem(key));
+    if (toastData) {
+      toastMessage(
+        toastData.type,
+        toastData.title,
+        toastData.message,
+        toastData.duration
+      );
+      localStorage.removeItem(key);
+    }
+  }
+  displayToastFromLocalStorage("toastData");
+  displayToastFromLocalStorage("toastDataEmail");
+  document.addEventListener("DOMContentLoaded", function () {
+    const idStudent = "{{ studentobj._id }}";
+    const emailStudent = "{{ studentobj.email }}";
+    const isGmail = emailStudent.trim().toLowerCase().endsWith("@gmail.com");
+    const checkboxesEmail = document.querySelectorAll(
+      '.toggleWrapper-email input[type="checkbox"]'
+    );
+    checkboxesEmail.forEach(function (checkbox) {
+      checkbox.addEventListener("change", function (event) {
+        if (isGmail) {
+          const isChecked = event.target.checked;
+          const fieldElement = event.target.closest(".toggleWrapper-email");
+          const fieldName = fieldElement.dataset.field;
+          // Gửi yêu cầu PATCH để cập nhật giá trị trong cơ sở dữ liệu
+          fetch(`/students/${idStudent}/actionUpdateEmailStudents`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ [fieldName]: isChecked }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.toastMessage == "success") {
+                toastMessage(
+                  data.toastMessage,
+                  "Thành công",
+                  "Thay đổi thành công",
+                  3000
+                );
+              } else if (data.toastMessage == "error") {
+                toastMessage(
+                  data.toastMessage,
+                  "Thất bại",
+                  "Thay đổi thất bại",
+                  3000
+                );
+                location.reload();
+              }
+            })
+            .catch((error) => {
+              toastMessage(
+                "warning",
+                "Cảnh báo",
+                "Có lỗi xảy ra vui lòng thử lại",
+                3000
+              );
+            });
+        } else {
+          this.checked = false;
+          const alert = document.getElementById("alert");
+          const div = document.createElement("div");
+          div.innerHTML = `
+          <div id="customAlertOverlay" onclick="hideCustomAlert()"></div>
+          <div id="customAlert">
+            <h3>Không thực hiện được chức năng</h3>
+            <p>
+              Bạn cần thêm thông tin tài khoản gmail trước khi thực hiện chức năng
+              này!
+            </p>
+            <div id="customAlertButtons">
+              <button id="btnCancel" onclick="hideCustomAlert()">Hủy bỏ</button>
+              
+              <button id="btnUpdateInfo" onclick="changePage()">Cập nhật thông tin</button>
+            </div>
+          </div>
+          `;
+          alert.appendChild(div);
+        }
+      });
+    });
+  });
+</script>
+<script>
+  const idStudent = "{{ studentobj._id }}";
+  function changePage() {
+    window.location.assign(`/students/${idStudent}/editStudent`);
+  }
+  function hideCustomAlert() {
+    const alert = document.getElementById("alert");
+    alert.removeChild(alert.firstChild);
+  }
+</script>

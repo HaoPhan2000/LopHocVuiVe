@@ -1,0 +1,95 @@
+<div class="container mt-5" style="min-height: 500px">
+  <div>
+    <h1 class="text-center">Biên lai học phí</h1>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <p class="m-0">
+        Ngày đóng học phí: <span>{{formatDate billobj.ngayDongHocPhi}}</span>
+      </p>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">Thông tin học sinh</h5>
+          <div class="row">
+            <div class="col-md-12">
+              <p class="card-text fw-bold text-danger">
+                <strong>Tên học sinh:</strong> {{studentobj.tenHocSinh}}
+              </p>
+              <p class="card-text fw-bold">
+                <strong>Số điện thoại:</strong> {{studentobj.soDienThoai}}
+              </p>
+              <p class="card-text fw-bold">
+                <strong>Địa chỉ:</strong> {{studentobj.diaChi}}
+              </p>
+              <p class="card-text fw-bold">
+                <strong>Email:</strong> {{studentobj.email}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">Thông tin chi tiết</h5>
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-center">STT</th>
+                    <th>Nội dung thu</th>
+                    <th>Số tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each billobj.ChiTiet}}
+                  <tr>
+                    <td class="text-center">{{sum @index 1}}</td>
+                    <td>{{this.noiDung}}</td>
+                    <td>{{addDotToNumber this.soTien}} <span> VND</span></td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="col-md-12 d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <p class="m-0">
+                  <strong>Phương thức thanh toán: </strong>
+                  {{billobj.phuongThucThanhToan}}
+                </p>
+              </div>
+              <div>
+                <p class="m-0">
+                  <strong>Tổng cộng: </strong>{{addDotToNumber billobj.tongTien}} <span> VND</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div>
+      <p><b>Ghi chú:</b> {{billobj.ghiChu}}</p>
+    </div>
+    <div class="d-flex justify-content-end">
+      <a href="#" class="btn btn-danger mt-3 ms-3" onclick="previous()">Quay về</a>
+    </div>
+  </div>
+</div>
+<script>
+  function previous(){
+    history.back();
+  }
+</script>

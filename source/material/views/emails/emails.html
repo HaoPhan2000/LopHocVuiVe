@@ -1,0 +1,164 @@
+<style>
+  input[type="month"] {
+    padding: 5px;
+    border: 2px solid #cccccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+  input[type="month"]:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  @media (max-width: 500px) {
+    input[type="month"] {
+      width: 170px;
+      font-size: 14px;
+    }
+  }
+  @media (max-width: 400px) {
+    input[type="month"] {
+      width: 150px;
+      font-size: 12px;
+    }
+  }
+</style>
+<div class="container-xl">
+  <div class="d-flex justify-content-end mt-2">
+    <div
+      class="text-center p-3"
+      style="cursor: pointer"
+      data-bs-toggle="modal"
+      data-bs-target="#timeSort"
+    >
+      <i class="fa-solid fa-sliders"></i> Bộ lọc
+    </div>
+  </div>
+  {{#if emailsobj.length}}
+  <div class="table-responsive-lg">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="text-center">STT {{{sortReverse _sortReverse}}}</th>
+          <th>Gửi từ</th>
+          <th>Gửi đến</th>
+          <th>Loại email</th>
+          <th>Trạng thái</th>
+          <th>Ngày gửi</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each emailsobj}}
+        <tr>
+          <td class="text-center">{{sum @index 1}}</td>
+          <td>{{this.fromEmail}}</td>
+          <td>{{this.toEmail}}</td>
+          <td>{{this.type}}</td>
+          {{#if this.send}}
+          <td class="text-success">{{this.trangThai}}</td>
+          {{else}}
+          <td class="text-danger">{{this.trangThai}}</td>
+          {{/if}}
+          <td>{{formatDate this.CreateDay}}</td>
+          <td>
+            <a
+              href="/bills/{{this.billID}}/billDetail"
+              class="no-underline text-success"
+              >Biên lai</a
+            >
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+</div>
+<div class="container mt-5">
+  <div
+    class="container d-flex flex-column justify-content-center align-items-center mt-5"
+  >
+    <div>
+      <i class="fa-solid fa-envelope fa-8x custom-icon-color"></i>
+    </div>
+    <div>
+      <div
+        class="d-flex flex-column justify-content-center align-items-center mt-1"
+      >
+        <h5 class="text-muted p-3">Không có email nào được gửi!</h5>
+      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        Email có thể được gửi khi tạo hóa đơn
+      </div>
+    </div>
+  </div>
+</div>
+{{/if}}
+<div class="form_circle">
+  <div class="circle" onclick="scrollToTop()" id="btn-circle">
+    <div class="icon">
+      <i class="fa-solid fa-arrow-up"></i>
+    </div>
+  </div>
+</div>
+<!--sort-->
+<div class="modal" tabindex="-1" id="timeSort">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bộ lọc email</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">{{{searchTime _searchTime}}}</div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn custom-btn-grayColor"
+          id="deleteSearch"
+        >
+          Xóa
+        </button>
+        <button type="button" class="btn btn-primary" id="searchTime">
+          Xác nhận
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelector("#deleteSearch").addEventListener("click", () => {
+    window.location.replace("/emails/emailPage");
+  });
+  document.querySelector("#searchTime").addEventListener("click", () => {
+    const fromTime = document.querySelector("#monthInputFrom").value;
+    const toTime = document.querySelector("#monthInputTo").value;
+    window.location.replace(
+      `?_search&type=time&fromTime=${fromTime}&toTime=${toTime}`
+    );
+  });
+  const btnCircle = document.getElementById("btn-circle");
+  window.onscroll = function () {
+    scrollFunction();
+  };
+
+  function scrollFunction() {
+    if (
+      document.body.scrollTop > 200 ||
+      document.documentElement.scrollTop > 200
+    ) {
+      btnCircle.style.display = "block";
+    } else {
+      btnCircle.style.display = "none";
+    }
+  }
+  // Hàm mẫu bạn muốn thực thi khi cuộn đến mức cụ thể
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+</script>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      ol,
+      ul,
+      li {
+        list-style: none;
+      }
+      #mail {
+        margin: 20px 10%;
+        box-sizing: border-box;
+      }
+
+      #mail_top_title {
+        text-align: center;
+      }
+      #mail_top_time p {
+        padding: 5px 0;
+      }
+      hr {
+        height: 1px;
+        margin: 1rem 0;
+        color: inherit;
+        background-color: currentColor;
+        border: 0;
+        opacity: 0.25;
+      }
+      #mail_body {
+        width: 100%;
+        overflow: hidden;
+      }
+      #mail_body_infoHS {
+        width: 40%; /* Chiếm 40% khối container */
+        float: left;
+      }
+      #mail_body_detail {
+        width: 60%; /* Chiếm 60% khối container */
+        float: right;
+      }
+      #mail_body_infoHS > div {
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        padding: 10px;
+      }
+      #mail_body_detail > div {
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        padding: 10px;
+      }
+      #mail_body_infoHS p {
+        margin-top: 5px;
+        word-wrap: break-word;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+      #mail_body_detail-pay {
+        overflow: hidden;
+      }
+      #mail_body_detail-payMethod {
+        float: left;
+      }
+      #mail_body_detail-totalPay {
+        float: right;
+      }
+      #bottom {
+        margin-top: 20px;
+      }
+      @media (max-width: 1080px) {
+        #mail_body {
+          width: 100%;
+          overflow: hidden;
+        }
+        #mail_body_infoHS {
+          width: 100%; /* Chiếm 40% khối container */
+        }
+        #mail_body_detail {
+          width: 100%; /* Chiếm 60% khối container */
+        }
+      }
+      @media (max-width: 768px) {
+        #mail_body_detail-payMethod {
+          float: none;
+        }
+        #mail_body_detail-totalPay {
+          float: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mail">
+      <div id="mail_top">
+        <div id="mail_top_title">
+          <h1><%= data.tieuDe %></h1>
+        </div>
+        <div id="mail_top_time">
+          <p>Ngày đóng học phí: <span> <%= PaymentDate %></span></p>
+        </div>
+      </div>
+      <hr />
+      <div id="mail_body">
+        <div id="mail_body_infoHS">
+          <div>
+            <h3>Thông tin học sinh</h3>
+            <div style="margin-top: 10px">
+              <p>
+                <strong>Tên học sinh:</strong> <%= data.studentData.tenHocSinh
+                %>
+              </p>
+              <p><strong>Số điện thoại:</strong> <%= data.studentData.sdt %></p>
+              <p><strong>Địa chỉ:</strong> <%= data.studentData.diaChi %></p>
+              <p><strong>Email:</strong> <%= data.studentData.email %></p>
+            </div>
+          </div>
+        </div>
+        <div id="mail_body_detail">
+          <div>
+            <h3>Thông tin chi tiết</h3>
+            <div style="margin-top: 10px">
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="text-align: center">STT</th>
+                      <th>Nội dung thu</th>
+                      <th>Số tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% data.detailData.ChiTiet.forEach(function(item,index) { %>
+                    <tr>
+                      <td style="text-align: center"><%= index+1 %></td>
+                      <td><%= item.noiDung %></td>
+                      <td><%= item.soTien %><span> VND</span></td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+              <div id="mail_body_detail-pay">
+                <% if (data.type === "isBill") { %>
+                <div id="mail_body_detail-payMethod">
+                  <p>
+                    <strong>Phương thức thanh toán: </strong><%=
+                    data.detailData.phuongThucThanhToan %>
+                  </p>
+                </div>
+                <div id="mail_body_detail-totalPay">
+                  <p>
+                    <strong>Tổng cộng: </strong><%= data.detailData.tongTien
+                    %><span> VND</span>
+                  </p>
+                </div>
+                <% } %> <% if (data.type === "isNotification") { %>
+                <div id="mail_body_detail-totalPay">
+                  <p>
+                    <strong>Tổng cộng: </strong><%= data.detailData.total
+                    %><span> VND</span>
+                  </p>
+                </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="bottom">
+        <p><b>Ghi chú: </b><span><%= data.ghiChu %></span></p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,501 @@
+<style>
+  .no-select {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+  }
+  .custom-img {
+    background-color: rgb(190, 215, 255);
+    height: 80%;
+    width: 100%;
+    border-radius: 10px;
+    position: absolute;
+    left: -30px;
+    box-shadow: 5px 10px rgba(180, 180, 180, 0.1);
+    overflow: hidden;
+  }
+  @media (max-width: 576px) {
+    .imageEditContent{
+      padding: 0 !important;
+    }
+    .custom-img {
+      left: -10px;
+    }
+  }
+  .custom-img img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+  }
+  .card-custom {
+    max-width: 540px;
+    border-radius: 10px;
+  }
+  .btn-custom {
+    border-radius: 20px;
+    background-color: rgb(135, 175, 255);
+    color: white;
+  }
+  .btn-custom:hover{
+    background-color: rgb(100, 150, 255);
+    color: white;
+  }
+</style>
+<div class="container-xl mt-3">
+  <h3>Cập nhật hình ảnh</h3>
+  <div class="row d-flex align-items-center p-4 imageEditContent">
+    <div class="col-md-5 col-sm-12">
+      <div class="container mt-4 p-0">
+        <div class="card">
+          <div class="row g-0">
+            <div
+              class="col-sm-4 col-4 d-flex align-items-center"
+              style="position: relative"
+            >
+              <div class="custom-img">
+                {{#if Classobj.pathImg}}
+                <img src="/img/{{Classobj.pathImg}}" alt="ảnh lớp học" />
+                {{/if}}
+              </div>
+            </div>
+            <div class="col-sm-8 col-8">
+              <div class="card-body no-select">
+                <h5 class="card-title">
+                  Lớp: <span>{{Classobj.tenMonHoc}}</span>
+                </h5>
+                <h6 class="card-title">
+                  Giáo viên: <span>{{Classobj.tenGiaoVien}}</span>
+                </h6>
+                <h6 class="card-title">
+                  Ngày dạy: <span>{{Classobj.ngayDay}}</span>
+                </h6>
+                <h6>
+                  <small class="text-muted">Ngày khai giảng:</small>
+                  <small class="text-muted">{{Classobj.ngayKhaiGiang}}</small>
+                </h6>
+                <button class="btn btn-custom">Chi tiết</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="col-1 d-none d-md-flex justify-content-center align-items-center"
+    >
+      <i
+        class="fa-solid fa-arrow-right-long fa-2x"
+        style="color: rgb(190, 215, 255)"
+      ></i>
+    </div>
+    <div
+      class="col-12 d-flex d-md-none justify-content-center align-items-center"
+    >
+      <i
+        class="fa-solid fa-arrow-down-long fa-2x p-1 mt-3"
+        style="color: rgb(190, 215, 255)"
+      ></i>
+    </div>
+    <div class="col-md-5 col-sm-12">
+      <div class="container mt-4 p-0">
+        <div class="card">
+          <div class="row g-0">
+            <div
+              class="col-sm-4 col-4 d-flex align-items-center"
+              style="position: relative"
+            >
+              <div class="custom-img" id="selectedImg"></div>
+            </div>
+            <div class="col-sm-8 col-8">
+              <div class="card-body no-select">
+                <h5 class="card-title">
+                  Lớp: <span>{{Classobj.tenMonHoc}}</span>
+                </h5>
+                <h6 class="card-title">
+                  Giáo viên: <span>{{Classobj.tenGiaoVien}}</span>
+                </h6>
+                <h6 class="card-title">
+                  Ngày dạy: <span>{{Classobj.ngayDay}}</span>
+                </h6>
+                <h6>
+                  <small class="text-muted">Ngày khai giảng:</small>
+                  <small class="text-muted">{{Classobj.ngayKhaiGiang}}</small>
+                </h6>
+                <input
+                  type="file"
+                  class="form-control"
+                  id="photo"
+                  name="photo"
+                  accept="image/jpg, image/JPG, image/jpeg, image/JPEG, image/png, image/PNG, image/gif, image/GIF"
+                />
+                <span
+                  class="text-danger p-2"
+                  id="alert_photo"
+                  style="display: block"
+                ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="col-md-1 col-sm-12 d-flex justify-content-center align-items-center"
+    >
+      <button class="btn btn-primary white-space-nowrap m-3"  data-bs-toggle="modal"  data-bs-target="#confirmModal">Cập nhật</button>
+    </div>
+  </div>
+</div>
+<!--confirm-->
+<div class="modal" tabindex="-1" id="confirmModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cập nhật hình ảnh</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Xác nhận cập nhật hình ảnh</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirm">Xác nhận</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  const toastData = JSON.parse(localStorage.getItem("toastData"));
+  if (toastData) {
+    // Hiển thị toast message
+    toastMessage(
+      toastData.type,
+      toastData.title,
+      toastData.message,
+      toastData.duration
+    );
+    localStorage.removeItem("toastData");
+  }
+  const classImg = "{{Classobj.pathImg}}";
+  const idClass = "{{ Classobj._id }}";
+  const fileInput = document.querySelector("#photo");
+  const alertSpan = document.querySelector("#alert_photo");
+  const frameImg = document.querySelector("#selectedImg");
+  const maxSize = 2 * 1024 * 1024;
+  let validation = true;
+  let formData = new FormData();
+
+  fileInput.addEventListener("change", (e) => {
+    const { files } = e.target;
+    let message = "";
+    formData = new FormData();
+    if (files.length !== 0) {
+      if (files.length > 1 || files[0].size > maxSize) {
+        frameImg.innerHTML = "";
+        message =
+          files.length > 1
+            ? "Bạn đã chọn nhiều hơn một tệp"
+            : "Tệp vượt quá giới hạn dung lượng 2MB";
+        validation = false;
+      } else {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(files[0]);
+        img.alt = "ảnh lớp học";
+        frameImg.innerHTML = "";
+        frameImg.appendChild(img);
+        formData.append("photo", e.target.files[0]);
+        validation = true;
+      }
+    } else {
+      frameImg.innerHTML = "";
+      validation = true;
+    }
+    fileInput.style.border = validation
+      ? "1px solid #ced4da"
+      : "1px solid #dc3545";
+    alertSpan.textContent = message;
+  });
+  document.querySelector("#confirm").addEventListener("click", () => {
+    if (validation) {
+      if (classImg.trim() == "" && fileInput.files.length === 0) {
+        toastMessage("error", "Lỗi", "Vui lòng chọn ảnh để cập nhật", 3000);
+      } else if (classImg.trim() == "") {
+        upDateImgFromEmptyToPic();
+      } else if (fileInput.files.length === 0) {
+        upDateImgFromPicToEmpty();
+      } else {
+        upDateImgFromPicToPic();
+      }
+    } else {
+      toastMessage(
+        "error",
+        "Lỗi",
+        "Vui lòng nhập thông tin thỏa điều kiện",
+        3000
+      );
+    }
+  });
+  function upDateImgFromPicToEmpty() {
+    const formData = {
+      value: classImg,
+    };
+    fetch(`/classes/actionDeleteImg`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.toastMessage == "success") {
+          const formData = {
+            pathImg: "",
+          };
+          fetch(`/classes/${idClass}/actionEdit`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.toastMessage == "success") {
+                localStorage.setItem(
+                  "toastData",
+                  JSON.stringify({
+                    type: data.toastMessage,
+                    title: "Thành công",
+                    message: "Cập nhật ảnh mới thành công",
+                    duration: 3000,
+                  })
+                );
+                location.reload();
+              } else if (data.toastMessage == "error") {
+                localStorage.setItem(
+                  "toastData",
+                  JSON.stringify({
+                    type: data.toastMessage,
+                    title: "Thất bại",
+                    message: "Cập nhật ảnh mới thất bại do lỗi sever",
+                    duration: 3000,
+                  })
+                );
+                location.reload();
+              }
+            })
+            .catch((error) => {
+              toastMessage(
+                "warning",
+                "Cảnh báo",
+                "Có lỗi xảy ra vui lòng thử lại",
+                3000
+              );
+            });
+        } else if (data.toastMessage == "error") {
+          localStorage.setItem(
+            "toastData",
+            JSON.stringify({
+              type: data.toastMessage,
+              title: "Thất bại",
+              message: "Cập nhật ảnh mới thất bại do lỗi sever",
+              duration: 3000,
+            })
+          );
+          location.reload();
+        }
+      })
+      .catch((error) => {
+        toastMessage(
+          "warning",
+          "Cảnh báo",
+          "Có lỗi xảy ra vui lòng thử lại",
+          3000
+        );
+      });
+  }
+  function upDateImgFromEmptyToPic() {
+    fetch("/photos/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.toastMessage == "success") {
+          const formData = {
+            pathImg: data.file,
+          };
+          fetch(`/classes/${idClass}/actionEdit`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.toastMessage == "success") {
+                localStorage.setItem(
+                  "toastData",
+                  JSON.stringify({
+                    type: data.toastMessage,
+                    title: "Thành công",
+                    message: "Cập nhật ảnh mới thành công",
+                    duration: 3000,
+                  })
+                );
+                location.reload();
+              } else if (data.toastMessage == "error") {
+                localStorage.setItem(
+                  "toastData",
+                  JSON.stringify({
+                    type: data.toastMessage,
+                    title: "Thất bại",
+                    message: "Cập nhật ảnh mới thất bại do lỗi sever",
+                    duration: 3000,
+                  })
+                );
+                location.reload();
+              }
+            })
+            .catch((error) => {
+              toastMessage(
+                "warning",
+                "Cảnh báo",
+                "Có lỗi xảy ra vui lòng thử lại",
+                3000
+              );
+            });
+        } else if (data.toastMessage == "error") {
+          toastMessage(
+            "error",
+            "Lỗi",
+            "Có lỗi xảy ra tải ảnh thất bại vui lòng thử lại",
+            3000
+          );
+        }
+      })
+      .catch((error) => {
+        toastMessage(
+          "warning",
+          "Cảnh báo",
+          "Có lỗi xảy ra vui lòng thử lại",
+          3000
+        );
+      });
+  }
+  function upDateImgFromPicToPic() {
+    fetch("/photos/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.toastMessage == "success") {
+          const formData = {
+            pathImg: data.file,
+          };
+          fetch(`/classes/${idClass}/actionEdit`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.toastMessage == "success") {
+                const formData = {
+                  value: classImg,
+                };
+                fetch(`/classes/actionDeleteImg`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(formData),
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    if (data.toastMessage == "success") {
+                      localStorage.setItem(
+                        "toastData",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "Thành công",
+                          message: "Cập nhật ảnh mới thành công",
+                          duration: 3000,
+                        })
+                      );
+                      location.reload();
+                    } else if (data.toastMessage == "error") {
+                      localStorage.setItem(
+                        "toastData",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "Cảnh báo",
+                          message:
+                            "Cập nhật ảnh mới thành công nhưng đã có lỗi xảy ra",
+                          duration: 3000,
+                        })
+                      );
+                      location.reload();
+                    }
+                  });
+              } else if (data.toastMessage == "error") {
+                const formData = {
+                  value: data.img,
+                };
+                fetch(`/classes/actionDeleteImg`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(formData),
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    localStorage.setItem(
+                      "toastData",
+                      JSON.stringify({
+                        type: "warning",
+                        title: "Cảnh báo",
+                        message: "Có lỗi xảy ra vui lòng thử lại",
+                        duration: 3000,
+                      })
+                    );
+                    location.reload();
+                  });
+              }
+            })
+            .catch((error) => {
+              toastMessage(
+                "warning",
+                "Cảnh báo",
+                "Có lỗi xảy ra vui lòng thử lại",
+                3000
+              );
+            });
+        } else if (data.toastMessage == "error") {
+          toastMessage(
+            "error",
+            "Lỗi",
+            "Có lỗi xảy ra tải ảnh thất bại vui lòng thử lại",
+            3000
+          );
+        }
+      })
+      .catch((error) => {
+        toastMessage(
+          "warning",
+          "Cảnh báo",
+          "Có lỗi xảy ra vui lòng thử lại",
+          3000
+        );
+      });
+  }
+</script>

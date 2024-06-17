@@ -1,0 +1,179 @@
+<div class="container-lg">
+  <div><h5 class="p-3 mt-2">Quản lý lớp học</h5></div>
+  <div class="container-lg p-0">
+    {{#if classesobj.length}}
+    <div class="table-responsive-lg">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="text-center">STT</th>
+          <th>Tên môn học</th>
+          <th>Tên giáo viên</th>
+          <th>Ngày dạy</th>
+          <th>Giờ dạy</th>
+          <th colspan="4" class="text-center">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each classesobj}}
+        <tr>
+          <td class="text-center">{{sum @index 1}}</td>
+          <td>{{this.tenMonHoc}}</td>
+          <td>{{this.tenGiaoVien}}</td>
+          <td>{{this.ngayDay}}</td>
+          <td>{{time this.gioBatDau this.gioKetThuc}}</td>
+          <td>
+            <a href="/classes/{{this._id}}/classDetail" class="no-underline text-primary"
+              >Chi tiết</a
+            >
+          </td>
+          <td><a href="/classes/{{this._id}}/editClass" class="no-underline text-danger">Cập nhật</a></td>
+          <td>
+            <a href="#" class="no-underline text-success">Xóa</a>
+          </td>
+          <td  class="p-0">
+            <div class="scrollable-list_checkbox container_checkbox_table">
+              <input id="{{this._id}}" type="checkbox"/>
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal">
+        Chuyển đến kho lưu trữ
+      </button>
+    </div>
+    <div>
+      <a href="#" class="btn btn-danger" id="back">Quay về</a>
+    </div>
+  </div>
+  {{else}}
+  <div
+    class="container d-flex flex-column justify-content-center align-items-center mt-5"
+  >
+    <div>
+      <i class="fa-solid fa-database fa-8x custom-icon-color"></i>
+    </div>
+    <div>
+      <div
+        class="d-flex flex-column justify-content-center align-items-center mt-1"
+      >
+        <h5 class="text-muted p-3">Không có lớp học nào!</h5>
+      </div>
+      <div>
+        Bạn chưa có lớp học nào hoặc tất cả được chuyển đến kho lưu trữ.
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</div>
+
+<!--confirmStorage-->
+<div class="modal" tabindex="-1" id="confirmModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Lưu trữ lớp học</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Lớp học đã chọn sẽ được đưa đến kho lưu trữ,bạn có thể khôi phục bất cứ lúc nào!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirm">Xác nhận</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  const backBtn = document.getElementById("back");
+  const confirmBtn = document.getElementById("confirm");
+  const listCheckBox = document.querySelectorAll('.scrollable-list_checkbox input[type="checkbox"]');
+  const selectedIds = [];
+  const toastData = JSON.parse(localStorage.getItem("toastData"));
+  if (toastData) {
+    // Hiển thị toast message
+    toastMessage(
+      toastData.type,
+      toastData.title,
+      toastData.message,
+      toastData.duration
+    );
+    localStorage.removeItem("toastData");
+  }
+  if (backBtn) {
+    backBtn.addEventListener("click", () => history.back());
+  }
+  listCheckBox.forEach((checkBox, index) => {
+    checkBox.onclick = function () {
+      const index = selectedIds.indexOf(checkBox.id);
+      if (index !== -1) {
+        selectedIds.splice(index, 1);
+      } else {
+        selectedIds.push(checkBox.id);
+      }
+    };
+  });
+  if (confirmBtn) {
+    confirmBtn.addEventListener("click", function () {
+      if (selectedIds.length != 0) {
+        fetch(`/classes/actionStateChange`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedIds),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.toastMessage == "success") {
+              localStorage.setItem(
+                "toastData",
+                JSON.stringify({
+                  type: data.toastMessage,
+                  title: "Thành công",
+                  message: "Chuyển lớp học đến kho lưu trữ thành công!",
+                  duration: 3000,
+                })
+              );
+              location.reload();
+            } else if (data.toastMessage == "error") {
+              localStorage.setItem(
+                "toastData",
+                JSON.stringify({
+                  type: data.toastMessage,
+                  title: "Thất bại",
+                  message:
+                    "Chuyển lớp học đến kho lưu trữ thất bại do lỗi sever!",
+                  duration: 3000,
+                })
+              );
+              location.reload();
+            }
+          })
+          .catch((error) => {
+            toastMessage(
+              "warning",
+              "Cảnh báo",
+              "Có lỗi xảy ra vui lòng thử lại!",
+              3000
+            );
+          });
+      } else {
+        toastMessage(
+          "warning",
+          "Báo lỗi",
+          "Bạn chưa chọn lớp học để chuyển đến kho lưu trữ!",
+          3000
+        );
+      }
+    });
+  }
+</script>

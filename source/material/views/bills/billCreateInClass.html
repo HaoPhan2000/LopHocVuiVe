@@ -1,0 +1,294 @@
+<div class="container">
+  <div class="row">
+    <div class="col-lg-3 col-sm-12 col-12">
+      <div class="container mt-4 p-0">
+        {{#with classesobj}}
+        <div class="card card-info">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Thông tin lớp học</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <p class="card-text fw-bold">
+                  <strong>Môn học:</strong> {{this.tenMonHoc}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Tên giáo viên:</strong> {{this.tenGiaoVien}}
+                </p>
+                <p class="card-text fw-bold text-danger">
+                  <strong>Ngày dạy:</strong> {{this.ngayDay}}
+                </p>
+                <p class="card-text fw-bold text-danger">
+                  <strong>Giờ dạy:</strong> {{time this.gioBatDau
+                  this.gioKetThuc}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/with}} {{#with studentobj}}
+        <div class="card card-info my-3">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Thông tin học sinh</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <p class="card-text fw-bold text-danger">
+                  <strong>Tên học sinh:</strong> {{this.tenHocSinh}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Số điện thoại:</strong> {{this.soDienThoai}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Địa chỉ:</strong>
+                  {{this.diaChi}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Gmail:</strong> {{this.email}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/with}}
+      </div>
+    </div>
+    <div class="col-lg-9 col-sm-12 col-12">
+      <div class="container mt-1" style="min-height: 400px">
+        <div class="container mt-5">
+          <div class="row">
+            <h2>Tạo biên lai học phí</h2>
+          </div>
+          <hr />
+          <div class="row g-3">
+            <div class="col-xs-12 col-sm-6">
+              <label for="soTien" class="form-label">Số tiền</label>
+              <input
+                type="text"
+                class="form-control"
+                name="soTien"
+                value="{{addDotToNumber classesobj.hocPhi}} VND"
+                disabled
+              />
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <label for="ngayDongTien" class="form-label"
+                >Ngày đóng tiền
+                <span class="text-danger"
+                  >(nếu để trống sẽ tự động dùng thời gian khởi tạo)</span
+                ></label
+              >
+              <input
+                type="date"
+                class="form-control"
+                name="ngayDongTien"
+                required
+              />
+            </div>
+          </div>
+          <div class="row g-3 mt-2">
+            <div class="col-xs-12 col-sm-6">
+              <label for="phuongThucThanhToan" class="form-label"
+                >Phương thức thanh toán
+              </label>
+              <select class="form-select" name="phuongThucThanhToan">
+                <option value="Tiền mặt">Tiền mặt</option>
+                <option value="Chuyển khoản">Chuyển khoản</option>
+                <option value="Ví điện tử">Ví điện tử</option>
+                <option value="Tiền kỹ thuật số">Tiền kỹ thuật số</option>
+              </select>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <label for="ghiChu" class="form-label">Ghi chú</label>
+              <textarea class="form-control" name="ghiChu" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <div>
+          <button id="submit" class="btn btn-primary">Tạo hóa đơn</button>
+        </div>
+        <div>
+          <a
+            href="/students/class/{{classesobj._id}}/student/{{studentobj._id}}"
+            class="btn btn-danger"
+            >Quay về</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  import { addDotToNumber } from "/function/dotToNumber.js";
+  document.getElementById("submit").addEventListener("click", function () {
+    const phuongThucThanhToan = document.querySelector(
+      'select[name="phuongThucThanhToan"]'
+    ).value;
+    const ngayDongTien = document.querySelector(
+      'input[name="ngayDongTien"]'
+    ).value;
+    const ghiChu = document.querySelector('textarea[name="ghiChu"]').value;
+    const idStudent = "{{ studentobj._id }}";
+    const tenHocSinh = "{{ studentobj.tenHocSinh }}";
+    const soDienThoai = "{{ studentobj.soDienThoai }}";
+    const diaChi = "{{ studentobj.diaChi }}";
+    const email = "{{ studentobj.email }}";
+    const tenMonHoc = "{{ classesobj.tenMonHoc }}";
+    const idClass = "{{ classesobj._id }}";
+    const ngayDay = "{{ classesobj.ngayDay }}";
+    const gioBatDau = "{{ classesobj.gioBatDau }}";
+    const gioKetThuc = "{{ classesobj.gioKetThuc }}";
+    const hocPhi = "{{ classesobj.hocPhi }}";
+    const today = new Date();
+    if (ngayDongTien === "") {
+      fetchActionCreateBill(today);
+    } else {
+      fetchActionCreateBill(ngayDongTien);
+    }
+    function fetchActionCreateBill(date) {
+      const formData = {
+        studentsID: idStudent,
+        ChiTiet: [
+          {
+            idLopHoc: idClass,
+            noiDung: `${tenMonHoc} ${ngayDay} ${gioBatDau}-${gioKetThuc}`,
+            soTien: hocPhi,
+          },
+        ],
+        ghiChu: ghiChu,
+        tongTien: hocPhi,
+        ngayDongHocPhi: date,
+        phuongThucThanhToan: phuongThucThanhToan,
+        CreateDay: today,
+      };
+      fetch(`/bills/actioncreateBillInClass`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.toastMessage == "success") {
+            localStorage.setItem(
+              "toastData",
+              JSON.stringify({
+                type: data.toastMessage,
+                title: "Thành công",
+                message: "Tạo mới hóa đơn thành công",
+                duration: 3000,
+              })
+            );
+            if (data.isSendMail) {
+              const alert = document.getElementById("alert");
+              const div = document.createElement("div");
+              div.innerHTML = `
+              <div id="customAlertOverlay">
+              <div class="loading-container">
+              <div class="loading-spinner"></div>
+              <p>Đang gửi email...</p>
+              </div>
+              </div>`;
+              alert.appendChild(div);
+
+              const dataEmail = {
+                tieuDe: "Hóa đơn học phí",
+                ngayDongTien: date,
+                studentData: {
+                  tenHocSinh: tenHocSinh,
+                  sdt: soDienThoai,
+                  diaChi: diaChi,
+                  email: email,
+                },
+                detailData: {
+                  ChiTiet: [
+                    {
+                      noiDung: `${tenMonHoc} ${ngayDay} ${gioBatDau}-${gioKetThuc}`,
+                      soTien: addDotToNumber(hocPhi),
+                    },
+                  ],
+                  phuongThucThanhToan: phuongThucThanhToan,
+                  tongTien: addDotToNumber(hocPhi),
+                },
+                ghiChu: ghiChu,
+                type: "isBill",
+                billID: data.billID,
+                CreateDay: today,
+              };
+              fetch(`/emails/actionSendBillEmail`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataEmail),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  switch (data.toastMessage) {
+                    case "success":
+                      localStorage.setItem(
+                        "toastDataEmail",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "Thành công",
+                          message: "Gửi email biên lai học phí thành công",
+                          duration: 3000,
+                        })
+                      );
+                      break;
+                    case "error":
+                      localStorage.setItem(
+                        "toastDataEmail",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "Thất bại",
+                          message: "Gửi email biên lai học phí thất bại",
+                          duration: 3000,
+                        })
+                      );
+                      break;
+                    case "warning":
+                      localStorage.setItem(
+                        "toastDataEmail",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "LỖi",
+                          message: "Đã có lỗi xảy ra",
+                          duration: 3000,
+                        })
+                      );
+                      break;
+                  }
+                })
+                .then(() => {
+                  window.location.replace( data.redirectTo);
+                });
+            } else {
+              window.location.replace( data.redirectTo);
+            }
+          } else if (data.toastMessage == "error") {
+            localStorage.setItem(
+              "toastData",
+              JSON.stringify({
+                type: data.toastMessage,
+                title: "Thất bại",
+                message: "Tạo mới hóa đơn thất bại do lỗi sever",
+                duration: 3000,
+              })
+            );
+            window.location.replace( data.redirectTo);
+          }
+        })
+        .catch((error) => {
+          toastMessage(
+            "warning",
+            "Cảnh báo",
+            "Có lỗi xảy ra vui lòng thử lại",
+            3000
+          );
+        });
+    }
+  });
+</script>

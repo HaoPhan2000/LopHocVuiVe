@@ -1,0 +1,35 @@
+{
+  "name": "blog-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "source/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --inspect source/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HaoPhan2000/blog_nodejs.git"
+  },
+  "author": "HaoPhan2000",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HaoPhan2000/blog_nodejs/issues"
+  },
+  "homepage": "https://github.com/HaoPhan2000/blog_nodejs#readme",
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.0.3",
+    "multer": "1.4.3",
+    "nodemailer": "^6.9.10",
+    "nodemon": "^3.0.2"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0"
+  }
+}

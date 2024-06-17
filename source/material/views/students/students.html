@@ -1,0 +1,124 @@
+<style>
+  @media (max-width: 500px) {
+   .input-group{
+   width: 90%;
+   }
+  }
+</style>
+<div class="container-xl">
+  <div class="d-flex justify-content-between align-items-center mt-2 p-3">
+    <div>{{{searchName _searchName}}}</div>
+    <div>
+      <a href="/students/createStudent" class="btn btn-primary white-space-nowrap"
+        >Thêm học sinh</a
+      >
+    </div>
+  </div>
+  <div class="container-xl mt-1">
+    {{#if studentsobj.length}}
+    <div class="table-responsive-lg">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th class="text-center">STT {{{sortReverse _sortReverse}}}</th>
+            <th>
+              <div class="d-flex">
+                <div class="me-1">
+                  <p class="m-0">Họ và tên</p>
+                </div>
+                <div>{{{sortName _sortName}}}</div>
+              </div>
+            </th>
+            <th>Số điện thoại</th>
+            <th>Email</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each studentsobj}}
+          <tr>
+            <td class="text-center">{{sum @index 1}}</td>
+            <td>{{this.tenHocSinh}}</td>
+            <td>{{this.soDienThoai}}</td>
+            <td>{{this.email}}</td>
+            <td>
+              <a
+                href="/students/{{this._id}}/editStudent"
+                class="no-underline text-primary"
+                >Cập nhật</a
+              >
+            </td>
+            <td><a href="#" class="no-underline text-danger">Xóa</a></td>
+            <td>
+              <a
+                href="/students/student/{{this._id}}"
+                class="no-underline text-success"
+                >Chi tiết</a
+              >
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div
+      class="container d-flex flex-column justify-content-center align-items-center"
+    >
+      <div class="mt-5">
+        <i class="fa-solid fa-user-slash fa-8x custom-icon-color"></i>
+      </div>
+      <div>
+        <div
+          class="d-flex flex-column justify-content-center align-items-center mt-1"
+        >
+          <h5 class="text-muted p-3">Không tìm thấy học sinh nào!</h5>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>
+
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  const dropdown = document.getElementById("sortNameClassDetail");
+  const toastData = JSON.parse(localStorage.getItem("toastData"));
+  if (toastData) {
+    // Hiển thị toast message
+    toastMessage(
+      toastData.type,
+      toastData.title,
+      toastData.message,
+      toastData.duration
+    );
+    localStorage.removeItem("toastData");
+  }
+  document
+    .getElementById("searchInput")
+    .addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        searchFunction();
+      }
+    });
+  document.getElementById("searchbtn").addEventListener("click", () => {
+    searchFunction();
+  });
+  function searchFunction() {
+    // Hàm xử lý tìm kiếm ở đây
+    const searchInputValue = document
+      .getElementById("searchInput")
+      .value.trim();
+    if (searchInputValue) {
+      window.location.href = `?_search&type=name&value=${searchInputValue}`;
+    }
+  }
+  dropdown.addEventListener("change", function () {
+    const selectedOption = dropdown.options[dropdown.selectedIndex].value;
+    if (selectedOption) {
+      window.location.href = selectedOption;
+    }
+  });
+</script>

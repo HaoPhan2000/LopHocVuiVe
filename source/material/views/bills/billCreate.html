@@ -1,0 +1,363 @@
+<div class="container mt-5" id="formCreateStudent">
+  <h2>Tạo mới hóa đơn</h2>
+  <div class="row g-5">
+    {{#with studentobj}}
+    <div class="col-xs-12 col-md-7">
+      <div class="row g-3">
+        <div class="col-xs-12 col-sm-6">
+          <label for="hoTenHocSinh" class="form-label">Họ tên học sinh</label>
+          <input
+            type="text"
+            class="form-control"
+            name="hoTenHocSinh"
+            value="{{this.tenHocSinh}}"
+            disabled
+          />
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <label for="soDienThoai" class="form-label">Số điện thoại</label>
+          <input
+            type="text"
+            class="form-control"
+            name="soDienThoai"
+            value="{{this.soDienThoai}}"
+            disabled
+          />
+        </div>
+      </div>
+      <div class="row g-3 mt-2">
+        <div class="col-xs-12 col-sm-6">
+          <label for="diaChi" class="form-label">địa chỉ</label>
+          <input
+            type="text"
+            class="form-control"
+            name="diaChi"
+            value="{{this.diaChi}}"
+            disabled
+          />
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <label for="email" class="form-label">Gmail</label>
+          <input
+            type="text"
+            class="form-control"
+            name="email"
+            value="{{this.email}}"
+            disabled
+          />
+        </div>
+      </div>
+      <div class="row g-3 mt-2">
+        <div class="col-xs-12 col-sm-6">
+          <label for="soTienHocPhi" class="form-label">Số tiền học phí</label>
+          <input
+            type="text"
+            class="form-control"
+            name="soTienHocPhi"
+            disabled
+          />
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <label for="ngayDongTien" class="form-label"
+            >Ngày đóng tiền
+            <span class="text-danger"
+              >(nếu để trống sẽ tự động dùng thời gian khởi tạo)</span
+            ></label
+          >
+          <input type="date" class="form-control" name="ngayDongTien" />
+        </div>
+      </div>
+      <div class="row g-3 mt-2">
+        <div class="col-xs-12 col-sm-6">
+          <div>
+            <label for="soTienKhac" class="form-label">Số tiền khác</label>
+            <input
+              type="text"
+              class="form-control"
+              name="soTienKhac"
+              id="soTienKhac"
+            />
+          </div>
+          <div class="mt-2">
+            <label for="phuongThucThanhToan" class="form-label"
+              >Phương thức thanh toán</label
+            >
+            <select class="form-select" name="phuongThucThanhToan">
+              <option value="Tiền mặt">Tiền mặt</option>
+              <option value="Chuyển khoản">Chuyển khoản</option>
+              <option value="Ví điện tử">Ví điện tử</option>
+              <option value="Tiền kỹ thuật số">Tiền kỹ thuật số</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <label for="ghiChu" class="form-label">Ghi chú:</label>
+          <textarea class="form-control" name="ghiChu" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    {{/with}}
+    <div class="col-xs-12 col-md-5">
+      <div>
+        <label for="courseName" class="form-label"
+          >Danh sách lớp học
+          <span class="text-danger"
+            >(chọn lớp học,học phí sẽ được tự động thêm vào)</span
+          ></label
+        >
+        <div class="scrollable-list">
+          {{#if classesobj.length}}
+          <ul>
+            {{#each classesobj}}
+            <li>
+              <div class="scrollable-list_item">
+                <div class="scrollable-list_checkbox">
+                  <input
+                    id="`checkbox-{{@index}}`"
+                    type="checkbox"
+                    onchange="updateHocPhi('{{this._id}}', '{{this.tenMonHoc}}', '{{this.ngayDay}}', '{{this.gioBatDau}}-{{this.gioKetThuc}}', '{{this.hocPhi}}')"
+                  />
+                </div>
+                <div class="scrollable-list_body">
+                  <div class="left-column">
+                    <div><p>{{this.tenMonHoc}}</p></div>
+                    <div><p>{{this.tenGiaoVien}}</p></div>
+                  </div>
+                  <div class="right-column">
+                    <div><p>{{this.ngayDay}}</p></div>
+                    <div><p>{{time this.gioBatDau this.gioKetThuc}}</p></div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <h5 class="text-muted">Không có lớp học nào!</h5>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <div><button id="submit" class="btn btn-primary">Tạo hóa đơn</button></div>
+    <div>
+      <a href="/students/student/{{studentobj._id}}" class="btn btn-danger"
+        >Quay về</a
+      >
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  import {
+    addDotToNumber,
+    xoaChuCaiVaThemDauCham,
+    loaiBoDauChamVaChuyenThanhKieuSo,
+  } from "/function/dotToNumber.js";
+  const soTienKhac = document.querySelector('input[name="soTienKhac"]');
+
+  soTienKhac.addEventListener("input", function () {
+    soTienKhac.value = xoaChuCaiVaThemDauCham(soTienKhac.value);
+  });
+
+  document.getElementById("submit").addEventListener("click", function () {
+    const phuongThucThanhToan = document.querySelector(
+      'select[name="phuongThucThanhToan"]'
+    ).value;
+    const ngayDongTien = document.querySelector(
+      'input[name="ngayDongTien"]'
+    ).value;
+    const ghiChu = document.querySelector('textarea[name="ghiChu"]').value;
+    const tongTien =
+      billCreate_tongTienDaChon +
+      loaiBoDauChamVaChuyenThanhKieuSo(soTienKhac.value);
+    const idStudent = "{{ studentobj._id }}";
+    const tenHocSinh = "{{ studentobj.tenHocSinh }}";
+    const soDienThoai = "{{ studentobj.soDienThoai }}";
+    const diaChi = "{{ studentobj.diaChi }}";
+    const email = "{{ studentobj.email }}";
+    const today = new Date();
+    if (tongTien > 0) {
+      billCreate_selected.push({
+        noiDung: "Số tiền khác",
+        soTien: soTienKhac.value || 0,
+      });
+      if (ngayDongTien === "") {
+        fetchActionCreateBill(today);
+      } else {
+        fetchActionCreateBill(ngayDongTien);
+      }
+    } else {
+      toastMessage(
+        "warning",
+        "Báo lỗi",
+        "Bạn vui lòng chọn lớp học muốn tạo hóa đơn hoặc số tiền khác",
+        3000
+      );
+    }
+    function fetchActionCreateBill(date) {
+      const formData = {
+        studentsID: idStudent,
+        ChiTiet: billCreate_selected,
+        ghiChu: ghiChu,
+        tongTien: tongTien,
+        ngayDongHocPhi: date,
+        phuongThucThanhToan: phuongThucThanhToan,
+      };
+      fetch(`/bills/actioncreateBill`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.toastMessage == "success") {
+            localStorage.setItem(
+              "toastData",
+              JSON.stringify({
+                type: data.toastMessage,
+                title: "Thành công",
+                message: "Tạo mới hóa đơn thành công",
+                duration: 3000,
+              })
+            );
+            if (data.isSendMail) {
+              const alert = document.getElementById("alert");
+              const div = document.createElement("div");
+              div.innerHTML = `
+              <div id="customAlertOverlay">
+              <div class="loading-container">
+              <div class="loading-spinner"></div>
+              <p>Đang gửi email...</p>
+              </div>
+              </div>`;
+              alert.appendChild(div);
+              const dataEmail = {
+                tieuDe: "Hóa đơn học phí",
+                ngayDongTien: date,
+                studentData: {
+                  tenHocSinh: tenHocSinh,
+                  sdt: soDienThoai,
+                  diaChi: diaChi,
+                  email: email,
+                },
+                detailData: {
+                  ChiTiet: billCreate_selected,
+                  phuongThucThanhToan: phuongThucThanhToan,
+                  tongTien: addDotToNumber(tongTien),
+                },
+                ghiChu: ghiChu,
+                type: "isBill",
+                billID: data.billID,
+              };
+              fetch(`/emails/actionSendBillEmail`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataEmail),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  switch (data.toastMessage) {
+                    case "success":
+                      localStorage.setItem(
+                        "toastDataEmail",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "Thành công",
+                          message: "Gửi email biên lai học phí thành công",
+                          duration: 3000,
+                        })
+                      );
+                      break;
+                    case "error":
+                      localStorage.setItem(
+                        "toastDataEmail",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "Thất bại",
+                          message: "Gửi email biên lai học phí thất bại",
+                          duration: 3000,
+                        })
+                      );
+                      break;
+                    case "warning":
+                      localStorage.setItem(
+                        "toastDataEmail",
+                        JSON.stringify({
+                          type: data.toastMessage,
+                          title: "LỖi",
+                          message: "Đã có lỗi xảy ra",
+                          duration: 3000,
+                        })
+                      );
+                      break;
+                  }
+                })
+                .then(() => {
+                  window.location.replace(data.redirectTo);
+                });
+            } else {
+              window.location.replace(data.redirectTo);
+            }
+          } else if (data.toastMessage == "error") {
+            localStorage.setItem(
+              "toastData",
+              JSON.stringify({
+                type: data.toastMessage,
+                title: "Thất bại",
+                message: "Tạo mới hóa đơn thất bại do lỗi sever",
+                duration: 3000,
+              })
+            );
+            window.location.replace(data.redirectTo);
+          }
+        })
+        .catch((error) => {
+          toastMessage(
+            "warning",
+            "Cảnh báo",
+            "Có lỗi xảy ra vui lòng thử lại",
+            3000
+          );
+        });
+    }
+  });
+</script>
+<script>
+  let selectedIds = [];
+  let tongTien = 0;
+  window.billCreate_selected = [];
+  window.billCreate_tongTienDaChon = 0;
+  const soTienHocPhi = document.querySelector('input[name="soTienHocPhi"]');
+  soTienHocPhi.value = `${tongTien} VND`;
+  // Hàm để thêm hoặc xóa ID khỏi mảng khi checkbox thay đổi trạng thái
+  function updateHocPhi(id, tenMonHoc, ngayDay, gioDay, price) {
+    const index = selectedIds.findIndex((item) => item.idLopHoc === id);
+
+    if (index !== -1) {
+      selectedIds.splice(index, 1);
+    } else {
+      selectedIds.push({
+        idLopHoc: id,
+        noiDung: `${tenMonHoc} ${ngayDay} ${gioDay}`,
+        soTien: price.toString(),
+      });
+    }
+
+    tongTien = selectedIds.reduce(
+      (total, item) => total + parseFloat(item.soTien),
+      0
+    );
+    //thêm .sau mỗi 3 số
+    soTienHocPhi.value = `${tongTien
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VND`;
+    window.billCreate_selected = selectedIds;
+    window.billCreate_tongTienDaChon = tongTien;
+  }
+</script>

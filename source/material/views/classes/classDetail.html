@@ -1,0 +1,185 @@
+<div class="container-lg">
+  <div class="row">
+    <div class="col-lg-3 col-sm-12">
+      <div class="container-md p-0">
+        {{#with classesobj}}
+        <div class="card card-info">
+          <div class="card-body">
+            <h4 class="card-title fw-bold">Thông tin lớp học</h4>
+            <div class="row">
+              <div class="col-md-12">
+                <p class="card-text fw-bold">
+                  <strong>Môn học:</strong> {{this.tenMonHoc}}
+                </p>
+                <p class="card-text fw-bold">
+                  <strong>Tên giáo viên:</strong> {{this.tenGiaoVien}}
+                </p>
+                <p class="card-text fw-bold text-danger">
+                  <strong>Ngày dạy:</strong> {{this.ngayDay}}
+                </p>
+                <p class="card-text fw-bold text-danger">
+                  <strong>Giờ dạy:</strong> {{time this.gioBatDau
+                  this.gioKetThuc}}
+                </p>
+                <p class="card-text">
+                  <strong>Ngày khai giảng:</strong> {{this.ngayKhaiGiang}}
+                </p>
+                <p class="card-text">
+                  <strong>Học phí:</strong> {{addDotToNumber this.hocPhi}}
+                </p>
+                <p class="card-text">
+                  <strong>Số lượng học sinh:</strong> {{this.soLuongHS}}
+                </p>
+                <p class="card-text">
+                  <strong>Năm học:</strong> {{this.this.namHoc}}
+                </p>
+                <p class="card-text"><strong>Học kì:</strong> {{this.hocKi}}</p>
+                <p class="card-text">
+                  <strong>Ngày khởi tạo:</strong> {{formatDatetime
+                  this.createdAt}}
+                </p>
+                <p class="card-text">
+                  <strong>Cập nhật gần nhất:</strong> {{formatDatetime
+                  this.updatedAt}}
+                </p>
+                <p class="card-text">
+                  <strong>Học sinh dừng học:</strong>
+                  <a
+                    href="/classes/{{this._id}}/addLeaveStudent"
+                    class="text-decoration-none text-primary"
+                    ><b>chi tiết</b></a
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/with}}
+      </div>
+    </div>
+    <div class="d-flex flex-column col-lg-9 col-sm-12">
+      <div class="d-flex justify-content-between align-items-center p-3 mt-2">
+        <div><h5 class="m-0">Danh sách học sinh</h5></div>
+        <div>
+          <a
+            href="/classes/{{classesobj._id}}/addStudents"
+            class="btn btn-primary white-space-nowrap"
+            >Thêm học sinh vào lớp</a
+          >
+        </div>
+      </div>
+      <div class="flex-grow-1 table-container">
+        {{#if studentsobj.length}}
+        <div class="table-responsive-lg">
+          <table class="table m-0" id="table">
+            <thead>
+              <tr>
+                <th class="text-center">STT {{{sortReverse _sortReverse}}}</th>
+                <th>
+                  <div class="d-flex">
+                    <div class="me-1">
+                      <p class="m-0">Họ và tên</p>
+                    </div>
+                    <div>{{{sortName _sortName}}}</div>
+                  </div>
+                </th>
+                <th class="text-center">Số điện thoại</th>
+                <th colspan="3" class="text-center">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each studentsobj}}
+              <tr>
+                <td class="text-center">
+                  {{paginationIndex ../_pagination 10 @index }}
+                </td>
+                <td>{{this.tenHocSinh}}</td>
+                <td class="text-center">{{this.soDienThoai}}</td>
+                <td>
+                  <a
+                    href="/students/{{this._id}}/editStudent"
+                    class="no-underline text-primary"
+                    >Cập nhật</a
+                  >
+                </td>
+                <td><a href="#" class="no-underline text-danger">Xóa</a></td>
+                <td>
+                  <a
+                    href="/students/class/{{../classesobj._id}}/student/{{this._id}}"
+                    class="no-underline text-success"
+                    >Chi tiết</a
+                  >
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <div
+          class="container d-flex flex-column justify-content-center align-items-center mt-5"
+        >
+          <div>
+            <i class="fa-solid fa-user-slash fa-8x custom-icon-color"></i>
+          </div>
+          <div>
+            <div
+              class="d-flex flex-column justify-content-center align-items-center mt-1"
+            >
+              <h5 class="text-muted p-3">
+                Không có học sinh nào trong lớp học này!
+              </h5>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <div>{{{pagination _pagination totalPage}}}</div>
+        <div>
+          <a href="/classes/home" class="btn btn-danger">Quay về</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { toastMessage } from "/function/toastMessage.js";
+  import { scrollToView } from "/function/scrollToView.js";
+  const toastData = JSON.parse(localStorage.getItem("toastData"));
+  const dropdown = document.getElementById("sortNameClassDetail");
+  const scroll = localStorage.getItem("scrollToView");
+  if (toastData) {
+    // Hiển thị toast message
+    toastMessage(
+      toastData.type,
+      toastData.title,
+      toastData.message,
+      toastData.duration
+    );
+    localStorage.removeItem("toastData");
+  }
+  if (scroll) {
+    //scroll to view
+    scrollToView("table");
+    localStorage.removeItem("scrollToView");
+  }
+  if (dropdown) {
+    dropdown.addEventListener("change", function () {
+      const selectedOption = dropdown.options[dropdown.selectedIndex].value;
+      if (selectedOption) {
+        window.location.href = selectedOption;
+      }
+    });
+  }
+</script>
+<script>
+  function addDataScrollToView() {
+    localStorage.setItem(
+      "scrollToView",
+      JSON.stringify({
+        type: true,
+      })
+    );
+  }
+</script>
