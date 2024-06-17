@@ -2,6 +2,7 @@ const { Emails } = require("../models/Model");
 const { sendEmailService } = require("../services/EmailService");
 const { sort } = require("../function-sever/sort");
 const { searchTime } = require("../function-sever/search");
+require("dotenv").config();
 const emailsController = {
   index: async (req, res) => {
     //[Get] /emails/emailPage
@@ -23,14 +24,14 @@ const emailsController = {
   sendBillEmail: async (req, res) => {
     //[Post] /emails/actionSendBillEmail
     const sendEmail = await sendEmailService(
-      "trochoivuongquyen30012000@gmail.com",
+      process.env.Email_UserName,
       req.body
     );
     if (sendEmail) {
       try {
         const newEmail = new Emails({
           billID: req.body.billID,
-          fromEmail: "trochoivuongquyen30012000@gmail.com",
+          fromEmail: process.env.Email_UserName,
           toEmail: req.body.studentData.email,
           type: "Biên lai học phí",
           trangThai: "Thành công",
@@ -45,7 +46,7 @@ const emailsController = {
       try {
         const newEmail = new Emails({
           billID: req.body.billID,
-          fromEmail: "trochoivuongquyen30012000@gmail.com",
+          fromEmail: process.env.Email_UserName,
           toEmail: req.body.studentData.email,
           type: "Biên lai học phí",
           trangThai: "Thất bại",

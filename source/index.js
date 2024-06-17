@@ -44,9 +44,7 @@ app.use(session({
 }));
 // Thiết lập middleware để kiểm tra intro
 app.use((req, res, next) => {
-  console.log("vào")
   if (!req.session.hasSeenIntro) {
-    console.log("1")
       req.session.hasSeenIntro = true;
       res.redirect(`/intro?url=${encodeURIComponent(req.originalUrl)}`);
   } else {
