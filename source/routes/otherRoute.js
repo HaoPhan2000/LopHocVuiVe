@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const otherController = require("../controllers/otherController");
+const classesController = require("../controllers/classesController");
 const upload = require("../middleWares/uploadPhotoMiddleWare");
+router.get("/", classesController.index);
 router.get("/reports", otherController.report);
 router.post("/photos/upload", upload, otherController.actionUploadPhoto);
 router.get("/infor", otherController.infor);
