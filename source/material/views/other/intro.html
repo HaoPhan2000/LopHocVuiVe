@@ -1,177 +1,181 @@
 <style>
-  .intro {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .smiley {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    background-image: linear-gradient(180deg, #ffee82, #ff8a00);
-    border-radius: 100rem;
-    border: 5px solid #ff9e1c;
-  }
+      .intro {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        overflow: hidden;
+      }
+      .smiley {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        background-image: linear-gradient(180deg, #ffee82, #ff8a00);
+        border-radius: 100rem;
+        border: 5px solid #ff9e1c;
+      }
 
-  .eye {
-    position: absolute;
-    width: 30px;
-    height: 35px;
-    background-image: radial-gradient(#374061, #332e2d);
-    border-radius: 50%;
-    top: 50px;
-    box-shadow: 0 0 5px 0 #f0f0f0;
-    transform-origin: center;
-    will-change: transform;
-  }
+      .eye {
+        position: absolute;
+        width: 30px;
+        height: 35px;
+        background-image: radial-gradient(#374061, #332e2d);
+        border-radius: 50%;
+        top: 50px;
+        box-shadow: 0 0 5px 0 #f0f0f0;
+        transform-origin: center;
+        will-change: transform;
+      }
 
-  .iris {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: #666879;
-    border-radius: 100rem;
-    top: 10px;
-    right: 5px;
-    will-change: transform;
-  }
+      .iris {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: #666879;
+        border-radius: 100rem;
+        top: 10px;
+        right: 5px;
+        will-change: transform;
+      }
 
-  .eye.left {
-    left: 50px;
-  }
+      .eye.left {
+        left: 50px;
+      }
 
-  .eye.right {
-    right: 50px;
-  }
+      .eye.right {
+        right: 50px;
+      }
 
-  .mouth {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    width: 100px;
-    height: 40px;
-    background-image: radial-gradient(#621414, #7b1e19);
-    border-bottom-left-radius: 120px 90px;
-    border-bottom-right-radius: 120px 90px;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-    border: 1px solid #410905;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+      .mouth {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        width: 100px;
+        height: 40px;
+        background-image: radial-gradient(#621414, #7b1e19);
+        border-bottom-left-radius: 120px 90px;
+        border-bottom-right-radius: 120px 90px;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        border: 1px solid #410905;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
 
-  .tooth {
-    width: 98px;
-    height: 18px;
-    border-bottom-left-radius: 180px 90px;
-    border-bottom-right-radius: 180px 90px;
-    background-color: #f0f0f0;
-  }
+      .tooth {
+        width: 98px;
+        height: 18px;
+        border-bottom-left-radius: 180px 90px;
+        border-bottom-right-radius: 180px 90px;
+        background-color: #f0f0f0;
+      }
 
-  .wrapper {
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
-      sans-serif;
-    user-select: none;
-  }
+      .wrapper {
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        user-select: none;
+      }
 
-  .static {
-    font-size: 80px;
-    font-weight: 600;
-  }
+      .static {
+        font-size: 80px;
+        font-weight: 600;
+      }
 
-  .dynamic-txt {
-    position: relative;
-  }
+      .dynamic-txt {
+        position: relative;
+      }
 
-  .dynamic-txt::after {
-    content: "";
-    position: absolute;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    background-color: rgb(255, 255, 255);
-    border-left: 3px solid black;
-    animation: typing 2s steps(6, end) forwards, disable 0s forwards 2s;
-  }
+      .dynamic-txt::after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        height: 100%;
+        width: 100%;
+        background-color: rgb(255, 255, 255);
+        border-left: 3px solid black;
+        animation: typing 2s steps(6, end) forwards, disable 0s forwards 2s;
+      }
 
-  @keyframes typing {
-    100% {
-      left: 100%;
-      margin: 0 -48px 0 48px;
-    }
-  }
+      @keyframes typing {
+        100% {
+          left: 100%;
+          margin: 0 -48px 0 48px;
+        }
+      }
 
-  @keyframes disable {
-    100% {
-      border: none;
-    }
-  }
+      @keyframes disable {
+        100% {
+          border: none;
+        }
+      }
 
-  @keyframes blink {
-    0%,
-    100% {
-      transform: scaleY(1) scaleX(1);
-    }
-    50% {
-      transform: scaleY(0.2) scaleX(1.4);
-    }
-  }
+      @keyframes blink {
+        0%,
+        100% {
+          transform: scaleY(1) scaleX(1);
+        }
+        50% {
+          transform: scaleY(0.2) scaleX(1.4);
+        }
+      }
 
-  .animate {
-    animation: blink 0.5s ease forwards;
-    animation-delay: 2s;
-  }
+      .animate {
+        animation: blink 0.5s ease forwards;
+        animation-delay: 2s;
+      }
 
-  .animate-eye-left {
-    animation: blink 0.5s ease forwards;
-    animation-delay: 2s;
-  }
+      .animate-eye-left {
+        animation: blink 0.5s ease forwards;
+        animation-delay: 2s;
+      }
 </style>
-<div class="intro">
-  <div class="row" style="width: 900px">
-    <div
-      class="d-flex justify-content-center align-items-center col-lg-3 col-sm-12"
-    >
-      <div class="smiley">
-        <div class="eye left">
-          <div class="iris"></div>
-        </div>
-        <div class="eye right">
-          <div class="iris"></div>
-        </div>
-        <div class="mouth">
-          <div class="tooth"></div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="d-flex justify-content-center align-items-center wrapper col-lg-9 col-sm-12"
-    >
-      <div class="row static">
+    <div class="intro">
+      <div class="row" style="width: 900px;">
         <div
-          class="d-flex justify-content-center align-items-center col-xs-12 col-sm-6 text-nowrap"
+          class="d-flex justify-content-center align-items-center col-lg-3 col-sm-12"
         >
-          <p class="m-0">LỚP HỌC</p>
+          <div class="smiley">
+            <div class="eye left">
+              <div class="iris"></div>
+            </div>
+            <div class="eye right">
+              <div class="iris"></div>
+            </div>
+            <div class="mouth">
+              <div class="tooth"></div>
+            </div>
+          </div>
         </div>
         <div
-          class="d-flex justify-content-center align-items-center col-xs-12 col-sm-6 text-nowrap"
+          class="d-flex justify-content-center align-items-center wrapper col-lg-9 col-sm-12"
         >
+       
+            <div class="row static">
+              <div
+              class="d-flex justify-content-center align-items-center  col-xs-12 col-sm-6 text-nowrap"
+            >
+            <p class="m-0">LỚP HỌC </p>
+            </div>
+            <div
+            class="d-flex justify-content-center align-items-center col-xs-12 col-sm-6 text-nowrap"
+          >
           <p class="dynamic-txt m-0">VUI VẺ</p>
-        </div>
+          </div>
+          
+          </div>
+       
       </div>
     </div>
-  </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const params = new URLSearchParams(window.location.search);
-      const redirectUrl = params.get("url");
-      document.querySelector(".eye.left").classList.add("animate-eye-left");
-      setTimeout(function () {
-        window.location.replace(redirectUrl);
-      }, 2500);
-    });
-  </script>
-</div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get("url");
+        document.querySelector(".eye.left").classList.add("animate-eye-left");
+        setTimeout(function () {
+          window.location.replace(redirectUrl);
+        }, 2500);
+      });
+    </script>
